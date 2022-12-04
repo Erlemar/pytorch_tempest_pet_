@@ -1,0 +1,7 @@
+lr: 0.005
+metric: ${metric.metric.metric_name}_epoch
+mode: "min"
+seed: 666
+debug: True
+n_classes: 12
+lightning_module_name: src.lightning_classes.lightning_pet_od.LitPetOD

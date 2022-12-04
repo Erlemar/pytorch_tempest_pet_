@@ -1,0 +1,10 @@
+metric:
+  class_name: torchmetrics.detection.mean_ap.MeanAveragePrecision
+  metric_name: map
+  params:
+    box_format: xywh
+    iou_type: bbox
+    iou_thresholds: [0.5]
+    rec_thresholds:
+    max_detection_thresholds:
+    class_metrics: True

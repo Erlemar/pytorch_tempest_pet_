@@ -1,0 +1,12 @@
+
+class_name: src.models.pet_model_vit.SmallViT
+params:
+  embed_dim: 256
+  hidden_dim: 512
+  num_heads: 8
+  num_layers: 4
+  patch_size: 4
+  num_channels: 3
+  num_patches: 64
+  num_classes: ${training.n_classes}
+  dropout: 0.05

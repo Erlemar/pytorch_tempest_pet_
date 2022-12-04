@@ -1,0 +1,3 @@
+
+class_name: src.models.pet_model.Net
+params:

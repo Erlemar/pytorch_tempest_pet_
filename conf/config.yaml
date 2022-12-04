@@ -1,0 +1,35 @@
+defaults:
+  - _self_
+  - augmentation: basic_augs1
+  - callbacks: callbacks
+  - datamodule: image_classification
+  - inference: basic
+  - logging: loggers
+  - loss: cross_entropy
+  - metric: accuracy
+  - model: simple_model
+  - optimizer: adamw
+  - private: custom
+  - scheduler: plateau
+  - trainer: default_trainer
+  - training: default_training
+  - override hydra/hydra_logging: colorlog
+  - override hydra/job_logging: colorlog
+
+general:
+  logs_folder_name: logs
+  workspace: erlemar
+  project_name: dl_pipeline
+  device: cuda
+  log_code: True
+  save_pytorch_model: True
+  save_best: True
+  convert_to_jit: False
+  predict: True
+
+hydra:
+  run:
+    dir: outputs/${now:%Y-%m-%d_%H-%M-%S}
+  sweep:
+    dir: outputs/${now:%Y-%m-%d_%H-%M-%S}
+    subdir: ${now:%Y-%m-%d_%H-%M-%S}_${hydra.job.num}_${datamodule.fold_n}

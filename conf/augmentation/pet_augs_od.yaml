@@ -1,0 +1,62 @@
+
+train:
+  augs:
+#    - class_name: albumentations.augmentations.geometric.transforms.ShiftScaleRotate
+#      params:
+#        p: 0.8
+#        shift_limit: 0.0625
+#        scale_limit: 0.9
+#        rotate_limit: 15
+#        rotate_method: ellipse
+    - class_name: albumentations.Resize
+      params:
+        height: ${datamodule.main_image_size}
+        width: ${datamodule.main_image_size}
+    - class_name: albumentations.Normalize
+      params:
+        mean:
+          - 0
+          - 0
+          - 0
+        std:
+          - 1
+          - 1
+          - 1
+        p: 1.0
+    - class_name: albumentations.pytorch.transforms.ToTensorV2
+      params:
+        p: 1.0
+
+  bbox_params:
+    format: yolo
+    min_visibility: 0.1
+    label_fields:
+
+
+
+valid:
+  augs:
+  - class_name: albumentations.Resize
+    params:
+      height: ${datamodule.main_image_size}
+      width: ${datamodule.main_image_size}
+  - class_name: albumentations.Normalize
+    params:
+      mean:
+        - 0
+        - 0
+        - 0
+      std:
+        - 1
+        - 1
+        - 1
+      p: 1.0
+  - class_name: albumentations.pytorch.transforms.ToTensorV2
+    params:
+        p: 1.0
+
+  bbox_params:
+    format: yolo
+    min_visibility: 0.1
+    label_fields:
+
