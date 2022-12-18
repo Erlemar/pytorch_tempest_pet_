@@ -1,4 +1,4 @@
-path: /Users/andreylukyanenko/Documents/Projects/ds/Data Science/projects/digit-draw-detect_prepare/dataset
+path: digit-draw-detect_prepare/dataset
 n_folds: 5
 fold_n: 0
 class_name: src.datasets.digit_dataset_yolo.DigitYOLODataset
