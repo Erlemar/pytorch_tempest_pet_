@@ -71,9 +71,9 @@ class DigitYOLODataset(Dataset):
                            )
             ])
 
-            image_aug, bbs_aug = seq(image=im, bounding_boxes=bbs)
+            im, bbs_aug = seq(image=im, bounding_boxes=bbs)
             bboxes = [[b_.center_x / max_x, b_.center_y / max_y,
-                       b_.width / max_x, b_.height / max_y, b_.label] for b_ in bbs.bounding_boxes]
+                       b_.width / max_x, b_.height / max_y, b_.label] for b_ in bbs_aug.bounding_boxes]
         elif self.mode == 'valid':
 
             bboxes = [[(box[0] + box[2] / 2) / max_x,
