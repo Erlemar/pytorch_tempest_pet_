@@ -1,17 +1,19 @@
+import imgaug.augmenters as iaa
+from imgaug.augmentables.bbs import BoundingBox, BoundingBoxesOnImage
 from typing import List, Dict, Optional
 
 import cv2
+import imgaug.augmenters as iaa
 import numpy as np
 import numpy.typing as npt
-from PIL import Image
+import torch
 from albumentations.core.composition import Compose
+from imgaug.augmentables.bbs import BoundingBox, BoundingBoxesOnImage
 from torch.utils.data import Dataset
 
-from torch.utils.data import Dataset
-from typing import List, Dict, Optional
-from albumentations.core.composition import Compose
-import torch
 from src.utils.ml_utils import iou
+
+
 class DigitYOLODataset(Dataset):
     def __init__(
             self,
@@ -24,7 +26,7 @@ class DigitYOLODataset(Dataset):
             mode: str = 'train',
             labels_to_ohe: bool = False,
             n_classes: int = 1,
-            S = None
+            S=None
     ):
         """
         Object detection dataset.
@@ -55,16 +57,29 @@ class DigitYOLODataset(Dataset):
         im = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         max_x = im.shape[0]
         max_y = im.shape[1]
-        max_size = max(im.shape)
         original_bboxes = self.bbox_annotations[self.image_names[idx]]
-        # print(original_bboxes)
-        # bboxes = [(box[0] / max_size, box[1] / max_size, box[2] / max_size, box[3] / max_size, box[4]) for box in
-        #           original_bboxes]
+        if self.mode == 'train':
+            bbi = []
+            for b in [[b[0], b[1], b[0] + b[2], b[1] + b[3], b[4]] for b in original_bboxes]:
+                bbi.append(BoundingBox(x1=b[0], y1=b[1], x2=b[2], y2=b[3], label=b[4]))
 
-        bboxes = [[((box[0] + box[2]) / 2) / max_x,
-                   ((box[1] + box[3]) / 2) / max_y,
-                   box[2] / max_x,
-                   box[3] / max_y, box[4]] for box in original_bboxes]
+            bbs = BoundingBoxesOnImage(bbi, shape=im.shape)
+
+            seq = iaa.Sequential([
+                iaa.Affine(rotate=(-45, 45), scale=(0.9, 1.0),
+                           translate_px={"x": (-20, 20), "y": (-20, 20)}, cval=255
+                           )
+            ])
+
+            image_aug, bbs_aug = seq(image=im, bounding_boxes=bbs)
+            bboxes = [[b_.center_x / max_x, b_.center_y / max_y,
+                       b_.width / max_x, b_.height / max_y, b_.label] for b_ in bbs.bounding_boxes]
+        elif self.mode == 'valid':
+
+            bboxes = [[(box[0] + box[2] / 2) / max_x,
+                       (box[1] + box[3] / 2) / max_y,
+                       box[2] / max_x,
+                       box[3] / max_y, box[4]] for box in original_bboxes]
         # print(self.transforms)
         augmentations = self.transforms(image=im, bboxes=bboxes)
         im = augmentations["image"]
